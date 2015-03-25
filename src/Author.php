@@ -44,17 +44,10 @@
     }
 
     function getBooks() {
-      $query = $GLOBALS['DB']->query("SELECT book_id FROM books_authors WHERE author_id = {$this->getId()};");
-      $book_ids = $query->fetchAll(PDO::FETCH_ASSOC);
-
+      $returned_results = $GLOBALS['DB']->query("SELECT * FROM books JOIN books_authors ON (books.id = books_authors.book_id) JOIN authors ON (books_authors.author_id = authors.id) WHERE authors.id = {$this->getId()};");
       $books = [];
-      foreach ($book_ids as $id) {
-        $book_id = $id['book_id'];
-        $result = $GLOBALS['DB']->query("SELECT * FROM books WHERE id = {$book_id};");
-        $returned_book = $result->fetchAll(PDO::FETCH_ASSOC);
-        $title = $returned_book[0]['title'];
-        $id = $returned_book[0]['id'];
-        $new_book = new Book($title, $id);
+      foreach($returned_results as $result) {
+        $new_book = new Book($result['title'], $result['id']);
         array_push($books, $new_book);
       }
       return $books;

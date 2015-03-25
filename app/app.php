@@ -43,13 +43,13 @@
   });
 
   $app->get("/authors", function() use ($app) {
-    $results = Author::getAll();
-    $results_books = [];
-    foreach ($results as $result) {
-      $books = $result->getBooks();
-      array_push($results_books, $books);
+    $authors = Author::getAll();
+    $books = [];
+    foreach ($authors as $author) {
+      $book= $author->getBooks();
+      array_push($books, $book);
     }
-    return $app['twig']->render('authors.html.twig', array('results_books' => $results_books, 'results' => $results));
+    return $app['twig']->render('authors.html.twig', array('books' => $books, 'authors' => $authors));
   });
 
   $app->get("/authors/{id}/edit", function($id) use ($app) {
@@ -151,12 +151,12 @@
     return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll(), 'author_added' => true, 'authors' => Author::getAll(), 'no_author_fail' => false));
   });
 
-  $app->delete("/author/{id}", function($id) use ($app) {
-    $author = Author::find($id);
-    $author->delete();
-    $book = Book::find($_POST['book_id']);
-    return $app['twig']->render('books.html.twig', array('book' => $book, 'authors' => $book->getAuthors()));
-  });
+  // $app->delete("/author/{id}", function($id) use ($app) {
+  //   $author = Author::find($id);
+  //   $author->delete();
+  //   $book = Book::find($_POST['book_id']);
+  //   return $app['twig']->render('books.html.twig', array('book' => $book, 'authors' => $book->getAuthors()));
+  // });
 
   $app->delete("/authors/{id}", function($id) use ($app) {
     $author = Author::find($id);
@@ -164,5 +164,17 @@
     return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll(), 'author_added' => true, 'authors' => Author::getAll(), 'no_author_fail' => false));
   });
 
+  $app->delete("/authors_pure/{id}", function($id) use ($app) {
+    $author = Author::find($id);
+    $author->delete();
+    $authors = Author::getAll();
+    $books = [];
+    foreach ($authors as $author) {
+      $book= $author->getBooks();
+      array_push($books, $book);
+    }
+    return $app['twig']->render('authors.html.twig', array('books' => $books, 'authors' => $authors));
+  });
+  
   return $app;
 ?>
