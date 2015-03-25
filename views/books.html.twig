@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel='stylesheet' href='/../css/styles.css'>
+    <title>Registrarinator</title>
+  </head>
+  <body>
+    <div class='container-fluid'>
+
+      <!-- PAGE BANNER -->
+      <div class='page-header'>
+        <img src='/img/fakeu.png' alt='university logo'>
+        <div class='logo-words'>
+          <h1>Registrarinator</h1>
+          <h5>sweet regist-rawr-ing</h5>
+        </div>
+      </div>
+
+      <h1>{{ course.getName }}</h1>
+
+      {% if students is not empty %}
+        <p>Here are the students:</p>
+        <ul>
+          {% for student in students %}
+            <li>
+              <form action='/student/{{ student.getId }}' method='post' class='inlineForm'>
+                <input name='_method' type='hidden' value='delete'>
+                <input id='course_id' name='course_id' type='hidden' value='{{ course.getId }}'>
+                <input type='submit' class='deleteLink' value='x'>
+              </form>
+              {{ student.getName }} enrolled {{ student.getEnrollmentDate }}
+              </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <h4>Add a student</h4>
+
+      <form action='/students' method='post'>
+        <input id='course_id' name='course_id[]' type='hidden' value='{{ course.getId }}'>
+        <div class='form-group'>
+          <label for='name'>Student name:</label>
+          <input id='name' name='name' class='form-control' type='text' required>
+        </div>
+        <div class='form-group'>
+          <label for='enrollment_date'>Student Enrollment Date:</label>
+          <input id='enrollment_date' name='enrollment_date' class='form-control' type='text' required>
+        </div>
+        <button type='submit' class='btn btn-success'>Add student</button>
+      </form>
+      <form action='/courses/{{ course.getId }}' method='post'>
+        <input name='_method' type='hidden' value='delete'>
+
+        <button type='submit' class='btn btn-danger'>Delete course</button>
+      </form>
+      <p><a href='/courses/{{ course.getId }}/edit'>Edit this course</a></p>
+      <p><a href='/'>Home</a></p>
+
+    </div>
+  </body>
+</html>

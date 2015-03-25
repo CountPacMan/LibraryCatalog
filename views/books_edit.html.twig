@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css'>
+  <link rel='stylesheet' href='/../css/styles.css'>
+  <title>Edit a thing!</title>
+</head>
+<body>
+  <div class='container'>
+
+    <!-- PAGE BANNER -->
+    <div class='page-header'>
+      <h1>Registrarinator</h1>
+      <h5>sweet regist-rawr-ing</h5>
+    </div>
+
+    <h1>Update the {{ course.getName }} course!</h1>
+
+    <form action='/courses/{{ course.getId }}' method='post'>
+      <input name='_method' type='hidden' value='patch'>
+
+      <div class='form-group'>
+        <label for='name'>Rename your course:</label>
+        <input id='name' name='name' class='form-control' type='text'>
+      </div>
+
+      <button type='submit' class='btn btn-success'>Update!</button>
+    </form>
+
+    <form action='/courses/{{ course.getId }}' method='post'>
+      <input name='_method' type='hidden' value='delete'>
+
+      <button type='submit' class='btn btn-danger'>Delete this course!</button>
+    </form>
+    <p><a href='/'>Home</a></p>
+  </div>
+</body>
+</html>

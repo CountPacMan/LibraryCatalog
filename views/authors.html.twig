@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel='stylesheet' href='/../css/styles.css'>
+    <title>Students</title>
+  </head>
+  <body>
+    <div class='container-fluid'>
+
+      <!-- PAGE BANNER -->
+      <div class='page-header'>
+        <h1>Registrarinator</h1>
+        <h5>sweet regist-rawr-ing</h5>
+      </div>
+
+      {% if results is not empty %}
+        <h3>Your students</h3>
+        {% for i in 0..results|length - 1 %}
+          <ul>
+            <li>
+              <form action='/students/{{ results[i].getId }}' method='post' class='inlineForm'>
+                <input name='_method' type='hidden' value='delete'>
+                <input type='submit' class='deleteLink' value='x'>
+              </form>
+              <a href='/students/{{ results[i].getId }}/edit'>{{ results[i].getName }}</a>, enrolled in
+              {{ results_courses[i]|length > 1 ? 'courses' : 'course' }}
+              {% for j in 0..results_courses[i]|length - 1 %}
+                [{{ results_courses[i][j].getName }}]
+              {% endfor %}
+              on {{ results[i].getEnrollmentDate }}
+            </li>
+          </ul>
+        {% endfor %}
+      {% else %}
+        <h3>You have no students fool!</h3>
+      {% endif %}
+
+      <a href='/'>Homie</a>
+    </div>
+  </body>
+</html>
