@@ -52,16 +52,16 @@
         $book_id = $id['book_id'];
         $result = $GLOBALS['DB']->query("SELECT * FROM books WHERE id = {$book_id};");
         $returned_book = $result->fetchAll(PDO::FETCH_ASSOC);
-        $name = $returned_book[0]['name'];
+        $title = $returned_book[0]['title'];
         $id = $returned_book[0]['id'];
-        $new_book = new Book($name, $id);
+        $new_book = new Book($title, $id);
         array_push($books, $new_book);
       }
       return $books;
     }
 
     function getOtherBooks() {
-      $query = $GLOBALS['DB']->query("SELECT books.id FROM books LEFT OUTER JOIN authors_books ON books.id = book_id WHERE author_id != {$this->getId()} OR author_id IS null;");
+      $query = $GLOBALS['DB']->query("SELECT books.id FROM books LEFT OUTER JOIN books_authors ON books.id = book_id WHERE author_id != {$this->getId()} OR author_id IS null;");
       $book_ids = $query->fetchAll(PDO::FETCH_ASSOC);
 
       $books = [];
@@ -80,7 +80,7 @@
 
     function delete() {
       $GLOBALS['DB']->exec("DELETE FROM authors WHERE id = {$this->getId()};");
-      $GLOBALS['DB']->exec("DELETE FROM authors_books WHERE author_id = {$this->getId()};");
+      $GLOBALS['DB']->exec("DELETE FROM books_authors WHERE author_id = {$this->getId()};");
     }
 
     static function find($search_id) {
@@ -109,7 +109,7 @@
 
     static function deleteAll() {
       $GLOBALS['DB']->exec("DELETE FROM authors *;");
-      $GLOBALS['DB']->exec("DELETE FROM authors_books *;");
+      $GLOBALS['DB']->exec("DELETE FROM books_authors *;");
     }
   }
 ?>

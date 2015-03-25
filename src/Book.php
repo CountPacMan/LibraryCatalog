@@ -67,7 +67,6 @@ class Book {
       $author_id = $id['author_id'];
       $result = $GLOBALS['DB']->query("SELECT * FROM authors WHERE id = {$author_id};");
       $returned_author = $result->fetchAll(PDO::FETCH_ASSOC);
-
       $name = $returned_author[0]['name'];
       $id = $returned_author[0]['id'];
       $new_author = new Author($name, $id);

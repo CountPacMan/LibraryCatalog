@@ -188,16 +188,16 @@
       $test_book = new Book($title);
       $test_book->save();
 
-      $test_book_id = $test_book->getId();
+
       $author_name = "Biscuitdoughhandsman";
       $test_author = new Author($author_name);
       $test_author->save();
 
       // Act
-      $result = $test_book->search($author_name);
+      $result = $test_book->search($title);
 
       // Assert
-      $this->assertEquals($test_author, $result[0]);
+      $this->assertEquals($test_book, $result[0]);
     }
 
     function test_updateTitle() {

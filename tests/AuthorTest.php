@@ -65,9 +65,9 @@
 
     function testDelete() {
       //Arrange
-      $name = "Biscuitdoughhandsman";
+      $title = "Biscuitdoughhandsman";
 
-      $test_book = new Book($name);
+      $test_book = new Book($title);
       $test_book->save();
 
       $name = "Bob";
