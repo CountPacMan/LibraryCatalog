@@ -3,7 +3,7 @@
   <head>
     <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel='stylesheet' href='/../css/styles.css'>
-    <title>Registrar</title>
+    <title>Library Catalog</title>
   </head>
   <body>
 
@@ -13,77 +13,88 @@
       <div class='page-header'>
         <img src='/img/fakeu.png' alt='university logo'>
         <div class='logo-words'>
-          <h1>Registrarinator</h1>
-          <h5>sweet regist-rawr-ing</h5>
+          <h1>Library Catalog</h1>
+          <h5>sweet Catalog-ing</h5>
         </div>
       </div>
 
-      <div class='row'>
-        {% if courses is not empty %}
-          <div class='col-md-12'>
 
-            <!-- SEARCH FOR STUDENTS -->
-            <form action='/search' method='post'>
-              <div class='form-group'>
-                <label for='name'>Student to search:</label>
-                <input id='name' name='name' class='form-control' type='text' required>
-              </div>
-              <button type='submit' class='btn btn-success'>Search</button>
-            </form>
-            <form action='/students'>
-              <button type='submit' class='btn btn-primary'>All students</button>
-            </form>
+        {% if books is not empty %}
+          <!-- SEARCH FOR Books -->
+          <div class = 'row'>
+            <div class='col-md-12'>
+              <form action='/search' method='post'>
+                <div class='form-group'>
+                  <label for='title'>Title to search:</label>
+                  <input id='title' name='title' class='form-control' type='text' required>
+                </div>
+                <button type='submit' class='btn btn-success'>Search</button>
+              </form>
+              <form action='/books'>
+                <button type='submit' class='btn btn-primary'>All Books</button>
+              </form>
+            </div>
+          </div>
+
+
+          <!-- SEARCH FOR Authors -->
+          <div class = 'row'>
+            <div class='col-md-12'>
+              <form action='/search_authors' method='post'>
+                <div class='form-group'>
+                  <label for='name'>Search Author:</label>
+                  <input id='name' name='name' class='form-control' type='text' required>
+                </div>
+                <button type='submit' class='btn btn-success'>Search</button>
+              </form>
+              <form action='/authors'>
+                <button type='submit' class='btn btn-primary'>All Authors</button>
+              </form>
+            </div>
           </div>
         {% endif %}
-      </div>
 
       <!-- COURSES AND STUDENTS ROW -->
       <div class='row'>
         <!-- COURSES -->
-        {% if courses is empty %}
+        {% if books is empty %}
           <div class='col-md-12'>
         {% else %}
           <div class='col-md-6'>
         {% endif %}
-            <h3>Create a new course</h3>
+            <h3>Create a new Book</h3>
 
-            <form action='/courses' method='post'>
+            <form action='/books' method='post'>
               <div class='form-group'>
-                <label for='name'>Course name:</label>
-                <input id='name' name='name' class='form-control' type='text' required>
+                <label for='title'>Book title:</label>
+                <input id='title' name='title' class='form-control' type='text' required>
               </div>
-              <div class='form-group'>
-                <label for='course_number'>Course number:</label>
-                <input id='course_number' name='course_number' class='form-control' type='text' required>
-              </div>
-              <button type='submit' class='btn btn-success'>Add course</button>
+
+              <button type='submit' class='btn btn-success'>Add Book</button>
             </form>
           </div>
 
         <!-- STUDENTS -->
         <div class='col-md-6'>
           {% if added %}
-            <h3>Student added!</h3>
+            <h3>Author added!</h3>
           {% endif %}
-          {% if courses is not empty %}
-            <h3>Create a new student</h3>
+          {% if books is not empty %}
+            <h3>Create a new Author</h3>
 
-            <form action='/students' method='post'>
+            <form action='/authors' method='post'>
               <div class='form-group'>
-                <label for='name'>Student name:</label>
+                <label for='name'>Author Name:</label>
                 <input id='name' name='name' class='form-control' type='text' required>
               </div>
+
+              Select books for Author
               <div class='form-group'>
-                <label for='enrollment_date'>Student Enrollment Date:</label>
-                <input id='enrollment_date' name='enrollment_date' class='form-control' type='text' required>
-              </div>
-              Select courses for student
-              <div class='form-group'>
-                {% for course in courses %}
-                  <input type="checkbox" name="course_id[]" value="{{ course.getId }}"> <a href="/courses/{{ course.getId }}"> {{ course.getName }} </a><br>
+                {% for book in books %}
+                  <input type="checkbox" name="book_id[]" value="{{ book.getId }}"> <a href="/books/{{ book.getId }}"> {{ book.getTitle }} </a><br>
                 {% endfor %}
               </div>
-              <button type='submit' class='btn btn-success'>Add student</button>
+              <button type='submit' class='btn btn-success'>Add Author</button>
             </form>
           {% endif %}
         </div>
@@ -91,7 +102,7 @@
 
       <!-- FOOTER -->
       <div class='page-footer'>
-        {% if courses is not empty %}
+        {% if books is not empty %}
           <div class='row'>
             <div id='footer' class='col-md-12'>
               <form action='/destroy' method='post'>

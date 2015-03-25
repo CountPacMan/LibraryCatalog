@@ -52,13 +52,13 @@
   // post
 
   $app->post("/books", function() use ($app) {
-    $book = new Book($_POST['name'], $_POST['book_number']);
+    $book = new Book($_POST['title']);
     $book->save();
     return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
   });
 
   $app->post("/authors", function() use ($app) {
-    $author = new Author($_POST['name'], $_POST['enrollment_date']);
+    $author = new Author($_POST['name']);
     $author->save();
     for ($i = 0; $i < count($_POST['book_id']); $i++) {
       $book = Book::find($_POST['book_id'][$i]);
@@ -124,7 +124,7 @@
 
   $app->delete("/authors/{id}", function($id) use ($app) {
     $author = Author::find($id);
-    $author->delete();
+    $author->deleteWithBook($_POST['book_id']);
     return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
   });
 
