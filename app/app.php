@@ -1,13 +1,13 @@
 <?php
   require_once __DIR__."/../vendor/autoload.php";
-  require_once __DIR__."/../src/Student.php";
-  require_once __DIR__."/../src/Course.php";
+  require_once __DIR__."/../src/Author.php";
+  require_once __DIR__."/../src/Book.php";
 
   $app = new Silex\Application();
 
   $app['debug'] = true;
 
-  $DB = new PDO('pgsql:host=localhost;dbname=registrar');
+  $DB = new PDO('pgsql:host=localhost;dbname=library');
 
   $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => __DIR__.'/../views'
@@ -19,122 +19,113 @@
   // get
 
   $app->get("/", function() use ($app) {
-    return $app['twig']->render('index.html.twig', array('added' => false, 'courses' => Course::getAll()));
+    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
   });
 
-  $app->get("/courses/{id}", function($id) use ($app) {
-    $course = Course::find($id);
-    return $app['twig']->render('courses.html.twig', array('course' => $course, 'students' => $course->getStudents()));
+  $app->get("/books/{id}", function($id) use ($app) {
+    $book = Book::find($id);
+    return $app['twig']->render('books.html.twig', array('book' => $book, 'authors' => $book->getAuthors()));
   });
 
-  $app->get("/courses/{id}/edit", function($id) use ($app) {
-    $course = Course::find($id);
-    return $app['twig']->render('courses_edit.html.twig', array('course' => $course));
+  $app->get("/books/{id}/edit", function($id) use ($app) {
+    $book = Book::find($id);
+    return $app['twig']->render('books_edit.html.twig', array('book' => $book));
   });
 
-  $app->get("/students", function() use ($app) {
-    $results = Student::getAll();
-    $results_courses = [];
+  $app->get("/authors", function() use ($app) {
+    $results = Author::getAll();
+    $results_books = [];
     foreach ($results as $result) {
-      $courses = $result->getCourses();
-      array_push($results_courses, $courses);
+      $books = $result->getBooks();
+      array_push($results_books, $books);
     }
-    return $app['twig']->render('students.html.twig', array('results_courses' => $results_courses, 'results' => $results));
+    return $app['twig']->render('authors.html.twig', array('results_books' => $results_books, 'results' => $results));
   });
 
-  $app->get("/students/{id}/edit", function($id) use ($app) {
-    $student = Student::find($id);
-    $courses = $student->getCourses();
-    $other_courses = $student->getOtherCourses();
-    return $app['twig']->render('students_edit.html.twig', array('student' => $student, 'courses' => $courses, 'other_courses' => $other_courses));
+  $app->get("/authors/{id}/edit", function($id) use ($app) {
+    $author = Author::find($id);
+    $books = $author->getBooks();
+    $other_books = $author->getOtherBooks();
+    return $app['twig']->render('students_edit.html.twig', array('author' => $author, 'books' => $books, 'other_books' => $other_books));
   });
 
   // post
 
-  $app->post("/courses", function() use ($app) {
-    $course = new Course($_POST['name'], $_POST['course_number']);
-    $course->save();
-    return $app['twig']->render('index.html.twig', array('added' => false, 'courses' => Course::getAll()));
+  $app->post("/books", function() use ($app) {
+    $book = new Book($_POST['name'], $_POST['book_number']);
+    $book->save();
+    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
   });
 
-  $app->post("/students", function() use ($app) {
-    $student = new Student($_POST['name'], $_POST['enrollment_date']);
-    $student->save();
-    for ($i = 0; $i < count($_POST['course_id']); $i++) {
-      $course = Course::find($_POST['course_id'][$i]);
-      $course->addStudent($student);
+  $app->post("/authors", function() use ($app) {
+    $author = new Author($_POST['name'], $_POST['enrollment_date']);
+    $author->save();
+    for ($i = 0; $i < count($_POST['book_id']); $i++) {
+      $book = Book::find($_POST['book_id'][$i]);
+      $book->addAuthor($author);
     }
-    return $app['twig']->render('index.html.twig', array('added' => true, 'courses' => Course::getAll()));
+    return $app['twig']->render('index.html.twig', array('added' => true, 'books' => Book::getAll()));
   });
 
   $app->post("/search", function() use ($app) {
-    $results = Course::search($_POST['name']);
-    $results_courses = [];
-    foreach ($results as $result) {
-      $courses = $result->getCourses();
-      array_push($results_courses, $courses);
-    }
-    return $app['twig']->render('search_results.html.twig', array('results' => $results, 'results_courses' => $results_courses, 'search_term' => $_POST['name']));
+    $results = Book::search($_POST['title']);
+    return $app['twig']->render('search_results.html.twig', array('results' => $results, 'search_term' => $_POST['title']));
   });
 
-  $app->post("/deleteStudents", function() use ($app) {
-    Student::deleteAll();
+  $app->post("/deleteAuthors", function() use ($app) {
+    Author::deleteAll();
     return $app['twig']->render('index.html.twig', array('added' => false));
   });
 
-  $app->post("/deleteCourses", function() use ($app) {
-    Course::deleteAll();
+  $app->post("/deleteBooks", function() use ($app) {
+    Book::deleteAll();
     return $app['twig']->render('index.html.twig', array('added' => false));
   });
 
   // patch
 
-  $app->patch("/courses/{id}", function($id) use ($app) {
-    $name = $_POST['name'];
-    $course = Course::find($id);
-    $course->updateName($name);
-    return $app['twig']->render('courses.html.twig', array('course' => $course, 'students' => $course->getStudents()));
+  $app->patch("/books/{id}", function($id) use ($app) {
+    $title = $_POST['title'];
+    $book = Book::find($id);
+    $book->updateTitle($title);
+    return $app['twig']->render('books.html.twig', array('book' => $book, 'authors' => $book->getAuthors()));
   });
 
-  $app->patch("/students/{id}", function($id) use ($app) {
+  $app->patch("/authors/{id}", function($id) use ($app) {
     $name = $_POST['name'];
-    $student = Student::find($id);
-    $student->updateName($name);
-    $student = Student::find($id);
-    for ($i = 0; $i < count($_POST['course_id']); $i++) {
-      $course = Course::find($_POST['course_id'][$i]);
-      $course->addStudent($student);
-    }
-    $courses = $student->getCourses();
-    $other_courses = $student->getOtherCourses();
-    return $app['twig']->render('students_edit.html.twig', array('student' => $student, 'courses' => $courses, 'other_courses' => $other_courses));
+    $author = Author::find($id);
+    $author->updateName($name);
+    $author = Author::find($id);
+    $books = $author->getBooks();
+    $other_books = $author->getOtherBooks();
+    return $app['twig']->render('students_edit.html.twig', array('author' => $author, 'books' => $books, 'other_books' => $other_books));
   });
 
   // delete
 
   $app->delete("/destroy", function() use ($app) {
-    Course::deleteAll();
-    Student::deleteAll();
-    return $app['twig']->render('index.html.twig', array('added' => false, 'courses' => Course::getAll()));
+    Book::deleteAll();
+    Author::deleteAll();
+    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
   });
 
-  $app->delete("/courses/{id}", function($id) use ($app) {
-    $course = Course::find($id);
-    $course->delete();
-    return $app['twig']->render('index.html.twig', array('added' => false, 'courses' => Course::getAll()));
+  $app->delete("/books/{id}", function($id) use ($app) {
+    $book = Book::find($id);
+    $book->delete();
+    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
   });
 
-  $app->delete("/student/{id}", function($id) use ($app) {
-    $student = Student::find($id);
-    $student->delete();
-    $course = Course::find($_POST['course_id']);
-    return $app['twig']->render('courses.html.twig', array('course' => $course, 'students' => $course->getStudents()));
+  $app->delete("/author/{id}", function($id) use ($app) {
+    $author = Author::find($id);
+    $author->delete();
+    $book = Book::find($_POST['book_id']);
+    return $app['twig']->render('books.html.twig', array('book' => $book, 'authors' => $book->getAuthors()));
   });
 
-  $app->delete("/students/{id}", function($id) use ($app) {
-    $student = Student::find($id);
-    $student->delete();
-    return $app['twig']->render('index.html.twig', array('added' => false, 'courses' => Course::getAll()));
+  $app->delete("/authors/{id}", function($id) use ($app) {
+    $author = Author::find($id);
+    $author->delete();
+    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
   });
 
   return $app;
