@@ -19,7 +19,7 @@
   // get
 
   $app->get("/", function() use ($app) {
-    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
+    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll(), 'author_added' => true, 'authors' => Author::getAll(), 'no_author_fail' => false));
   });
 
   $app->get("/books/{id}", function($id) use ($app) {
@@ -30,6 +30,16 @@
   $app->get("/books/{id}/edit", function($id) use ($app) {
     $book = Book::find($id);
     return $app['twig']->render('books_edit.html.twig', array('book' => $book));
+  });
+
+  $app->get("/books", function() use ($app) {
+    $books = Book::getAll();
+    $authors = [];
+    foreach ($books as $book) {
+      $author = $book->getAuthors();
+      array_push($authors, $author);
+    }
+    return $app['twig']->render('all_books.html.twig', array('authors' => $authors, 'books' => $books));
   });
 
   $app->get("/authors", function() use ($app) {
@@ -52,19 +62,45 @@
   // post
 
   $app->post("/books", function() use ($app) {
-    $book = new Book($_POST['title']);
-    $book->save();
-    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
+    $added = false;
+    $no_author_fail = false;
+    if (isset($_POST['author_id'])) {
+      $book = new Book($_POST['title']);
+      $book->save();
+      for ($i = 0; $i < count($_POST['author_id']); $i++){
+        $author= Author::find($_POST['author_id'][$i]);
+        $author->addBook($book);
+        $added = true;
+      }
+    } elseif (!empty($_POST['name'])) {
+      $book = new Book($_POST['title']);
+      $book->save();
+      $author = new Author($_POST['name']);
+      $author->save();
+      $book->addAuthor($author);
+      $added = true;
+    } else {
+      $no_author_fail = true;
+    }
+
+    return $app['twig']->render('index.html.twig', array('added' => $added, 'books' => Book::getAll(), 'author_added' => true, 'authors' => Author::getAll(), 'no_author_fail' => $no_author_fail));
   });
 
   $app->post("/authors", function() use ($app) {
-    $author = new Author($_POST['name']);
-    $author->save();
-    for ($i = 0; $i < count($_POST['book_id']); $i++) {
-      $book = Book::find($_POST['book_id'][$i]);
-      $book->addAuthor($author);
+    $added = false;
+    $author_added = true;
+    if (isset($_POST['book_id'])) {
+      $author = new Author($_POST['name']);
+      $author->save();
+      for ($i = 0; $i < count($_POST['book_id']); $i++) {
+        $book = Book::find($_POST['book_id'][$i]);
+        $book->addAuthor($author);
+      }
+      $added = true;
+    } else {
+      $author_added = false;
     }
-    return $app['twig']->render('index.html.twig', array('added' => true, 'books' => Book::getAll()));
+    return $app['twig']->render('index.html.twig', array('added' => $added, 'books' => Book::getAll(), 'author_added' => $author_added, 'authors' => Author::getAll(), 'no_author_fail' => false));
   });
 
   $app->post("/search", function() use ($app) {
@@ -74,12 +110,12 @@
 
   $app->post("/deleteAuthors", function() use ($app) {
     Author::deleteAll();
-    return $app['twig']->render('index.html.twig', array('added' => false));
+    return $app['twig']->render('index.html.twig', array('added' => false, 'author_added' => true, 'no_author_fail' => false));
   });
 
   $app->post("/deleteBooks", function() use ($app) {
     Book::deleteAll();
-    return $app['twig']->render('index.html.twig', array('added' => false));
+    return $app['twig']->render('index.html.twig', array('added' => false, 'author_added' => true, 'no_author_fail' => false));
   });
 
   // patch
@@ -106,13 +142,13 @@
   $app->delete("/destroy", function() use ($app) {
     Book::deleteAll();
     Author::deleteAll();
-    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
+    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll(), 'author_added' => true, 'authors' => Author::getAll(), 'no_author_fail' => false));
   });
 
   $app->delete("/books/{id}", function($id) use ($app) {
     $book = Book::find($id);
     $book->delete();
-    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
+    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll(), 'author_added' => true, 'authors' => Author::getAll(), 'no_author_fail' => false));
   });
 
   $app->delete("/author/{id}", function($id) use ($app) {
@@ -125,7 +161,7 @@
   $app->delete("/authors/{id}", function($id) use ($app) {
     $author = Author::find($id);
     $author->deleteWithBook($_POST['book_id']);
-    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll()));
+    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll(), 'author_added' => true, 'authors' => Author::getAll(), 'no_author_fail' => false));
   });
 
   return $app;

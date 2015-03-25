@@ -18,7 +18,17 @@
         </div>
       </div>
 
-
+      {% if not author_added %}
+        <h2 class='error'>ERROR: Must add at least one book when adding an author
+        </h2>
+      {% endif %}
+      {% if no_author_fail %}
+        <h2 class='error'>ERROR: Must add at least one author when adding a book
+        </h2>
+      {% endif %}
+      {% if added %}
+        <h2 class='success'>added!</h2>
+      {% endif %}
         {% if books is not empty %}
           <!-- SEARCH FOR Books -->
           <div class = 'row'>
@@ -68,17 +78,24 @@
               <div class='form-group'>
                 <label for='title'>Book title:</label>
                 <input id='title' name='title' class='form-control' type='text' required>
-              </div>
 
+              </div>
+              <div class='form-group'>
+                <label for='name'>Author name:</label>
+                <input id='name' name='name' class='form-control' type='text'>
+              </div>
+              Select authors for book
+              <div class='form-group'>
+                {% for author in authors %}
+                  <input type="checkbox" name="author_id[]" value="{{ author.getId }}"> <a href="/authors/{{ author.getId }}"> {{ author.getName }} </a><br>
+                {% endfor %}
+              </div>
               <button type='submit' class='btn btn-success'>Add Book</button>
             </form>
           </div>
 
         <!-- STUDENTS -->
         <div class='col-md-6'>
-          {% if added %}
-            <h3>Author added!</h3>
-          {% endif %}
           {% if books is not empty %}
             <h3>Create a new Author</h3>
 

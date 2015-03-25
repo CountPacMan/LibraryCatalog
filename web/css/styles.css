@@ -53,3 +53,11 @@ ul {
 .inlineForm {
   display:inline;
 }
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}

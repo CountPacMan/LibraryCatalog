@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel='stylesheet' href='/../css/styles.css'>
+    <title>Books!</title>
+  </head>
+  <body>
+    <div class='container-fluid'>
+
+      <!-- PAGE BANNER -->
+      <div class='page-header'>
+        <h1>Libray Catalog</h1>
+        <h5>sweet catalog-ing</h5>
+      </div>
+
+      {% if books is not empty %}
+        <h3>Your Books</h3>
+        {% for i in 0..books|length - 1 %}
+          <ul>
+            <li>
+              <form action='/students/{{ books[i].getId }}' method='post' class='inlineForm'>
+                <input name='_method' type='hidden' value='delete'>
+                <input type='submit' class='deleteLink' value='x'>
+              </form>
+              <a href='/students/{{ books[i].getId }}/edit'>{{ books[i].getTitle }}</a>, enrolled in
+              {{ authors[i]|length > 1 ? 'authors' : 'author' }}
+              {% for j in 0..authors[i]|length - 1 %}
+                {{ authors[i][j].getName }}
+              {% endfor %}
+
+            </li>
+          </ul>
+        {% endfor %}
+      {% else %}
+        <h3>You have no books fool!</h3>
+      {% endif %}
+
+      <a href='/'>Homie</a>
+    </div>
+  </body>
+</html>
