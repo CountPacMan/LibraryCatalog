@@ -166,15 +166,27 @@
 
   $app->delete("/authors_pure/{id}", function($id) use ($app) {
     $author = Author::find($id);
-    $author->delete();
     $authors = Author::getAll();
+    // if a book the author has written has only one author, delete the book
+    $author_books = $author->getBooks();
+    var_dump($author_books);
+    echo "before!";
+    foreach ($author_books as $book) {
+      var_dump($book->getAuthors());
+      if (count($book->getAuthors()) == 1) {
+        echo "entered!";
+        $author->deleteWithBook($book);
+      }
+    }
+    $author->delete();
     $books = [];
+    $authors = Author::getAll();
     foreach ($authors as $author) {
-      $book= $author->getBooks();
+      $book = $author->getBooks();
       array_push($books, $book);
     }
     return $app['twig']->render('authors.html.twig', array('books' => $books, 'authors' => $authors));
   });
-  
+
   return $app;
 ?>
