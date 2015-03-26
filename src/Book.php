@@ -59,7 +59,7 @@ class Book {
   }
 
   function getAuthors() {
-    $returned_results = $GLOBALS['DB']->query("SELECT * FROM authors JOIN books_authors ON (authors.id = books_authors.author_id) JOIN books ON (books_authors.book_id = books.id) WHERE books.id = {$this->getId()};");
+    $returned_results = $GLOBALS['DB']->query("SELECT authors.* FROM authors JOIN books_authors ON (authors.id = books_authors.author_id) JOIN books ON (books_authors.book_id = books.id) WHERE books.id = {$this->getId()};");
     $authors = [];
     foreach($returned_results as $result) {
       $new_author = new Author($result['name'], $result['id']);

@@ -1,6 +1,6 @@
 # Library Catlog for Epicodus
-## by Daniel Toader and Abeer Khakwani
-### Date: March 25, 2015
+## by Daniel Toader
+### Date: March 26, 2015
 #### Description
 Library Catalog lets librarians create, read, update ,delete, and list books in the catalog. The librarian can search for a book by author or title. A book can have multiple authors and authors can write multiple books.
 
@@ -12,7 +12,7 @@ Library Catalog lets librarians create, read, update ,delete, and list books in 
 5. Use Composer to install required dependencies in the composer.json file
 6. Start the web app by pointing your browser to the root (http://localhost:8000/)
 
-#### Copyright © 2015, Daniel Toader and Abeer Khakwani
+#### Copyright © 2015, Daniel Toader
 
 #### License: [MIT](https://github.com/twbs/bootstrap/blob/master/LICENSE")  
 
