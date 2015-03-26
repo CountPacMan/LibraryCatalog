@@ -147,32 +147,19 @@
 
   $app->delete("/books/{id}", function($id) use ($app) {
     $book = Book::find($id);
-    $book->delete();
-    return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll(), 'author_added' => true, 'authors' => Author::getAll(), 'no_author_fail' => false));
-  });
-
-  // $app->delete("/author/{id}", function($id) use ($app) {
-  //   $author = Author::find($id);
-  //   $author->delete();
-  //   $book = Book::find($_POST['book_id']);
-  //   return $app['twig']->render('books.html.twig', array('book' => $book, 'authors' => $book->getAuthors()));
-  // });
-
-  $app->delete("/authors/{id}", function($id) use ($app) {
-    $author = Author::find($id);
-    $author_books = $author->getBooks();
-    foreach ($author_books as $book) {
-      if (count($book->getAuthors()) == 1) {
-        $author->deleteWithBook($book->getId());
+    $book_authors = $book->getAuthors();
+    // if a book the author has written has only one author, delete the book
+    foreach ($book_authors as $author) {
+      if (count($author->getBooks() == 1)) {
+        $book->deleteWithAuthor($author->getId());
       }
     }
-    $author->deleteWithBook($_POST['book_id']);
+    $book->delete();
     return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll(), 'author_added' => true, 'authors' => Author::getAll(), 'no_author_fail' => false));
   });
 
   $app->delete("/authors_pure/{id}", function($id) use ($app) {
     $author = Author::find($id);
-    $authors = Author::getAll();
     // if a book the author has written has only one author, delete the book
     $author_books = $author->getBooks();
     foreach ($author_books as $book) {

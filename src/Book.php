@@ -43,6 +43,11 @@ class Book {
     $GLOBALS['DB']->exec("DELETE FROM books_authors WHERE book_id = {$this->getId()};");
   }
 
+  function deleteWithAuthor($author_id) {
+    $GLOBALS['DB']->exec("DELETE FROM books_authors WHERE book_id = {$this->getId()} AND book_id = {$author_id};");
+    $GLOBALS['DB']->exec("DELETE FROM authors WHERE id = {$author_id};");
+  }
+
   function addAuthor($author) {
     $insert = true;
     $query = $GLOBALS['DB']->query("SELECT * FROM books_authors;");

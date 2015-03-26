@@ -15,18 +15,18 @@
       </div>
 
       {% if books is not empty %}
-        <h3>Your Books</h3>
+        <h3>Books</h3>
         {% for i in 0..books|length - 1 %}
           <ul>
             <li>
-              <form action='/students/{{ books[i].getId }}' method='post' class='inlineForm'>
+              <form action='/books/{{ books[i].getId }}' method='post' class='inlineForm'>
                 <input name='_method' type='hidden' value='delete'>
                 <input type='submit' class='deleteLink' value='x'>
               </form>
-              <a href='/students/{{ books[i].getId }}/edit'>{{ books[i].getTitle }}</a>, enrolled in
+              <a href='/books/{{ books[i].getId }}/edit'>{{ books[i].getTitle }}</a>, written by
               {{ authors[i]|length > 1 ? 'authors' : 'author' }}
               {% for j in 0..authors[i]|length - 1 %}
-                {{ authors[i][j].getName }}
+                [{{ authors[i][j].getName }}]
               {% endfor %}
 
             </li>

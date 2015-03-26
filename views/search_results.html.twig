@@ -27,8 +27,8 @@
                 <input name='_method' type='hidden' value='delete'>
                 <input type='submit' class='deleteLink' value='x'>
               </form>
-              {{ search_term }}, enrolled in
-              {{ results_courses[i]|length > 1 ? 'courses' : 'course' }}
+              {{ search_term }}, written by
+              {{ results_courses[i]|length > 1 ? 'authors' : 'author' }}
               {% for j in 0..results_courses[i]|length - 1 %}
                 [{{ results_courses[i][j].getName }}]
               {% endfor %}
