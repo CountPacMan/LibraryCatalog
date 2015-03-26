@@ -78,6 +78,7 @@
 
     function deleteWithBook($book_id) {
       $GLOBALS['DB']->exec("DELETE FROM books_authors WHERE author_id = {$this->getId()} AND book_id = {$book_id};");
+      $GLOBALS['DB']->exec("DELETE FROM books WHERE id = {$book_id};");
     }
 
     static function find($search_id) {
