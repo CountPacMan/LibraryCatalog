@@ -10,8 +10,11 @@
 
       <!-- PAGE BANNER -->
       <div class='page-header'>
-        <h1>Libray Catalog</h1>
-        <h5>sweet catalog-ing</h5>
+        <img src='/img/fakeu.png' alt='university logo'>
+        <div class='logo-words'>
+          <h1>Library Catalog</h1>
+          <h5>sweet Catalog-ing</h5>
+        </div>
       </div>
 
       {% if books is not empty %}
@@ -26,7 +29,7 @@
               <a href='/books/{{ books[i].getId }}/edit'>{{ books[i].getTitle }}</a>, written by
               {{ authors[i]|length > 1 ? 'authors' : 'author' }}
               {% for j in 0..authors[i]|length - 1 %}
-                [{{ authors[i][j].getName }}]
+                [<a href='/authors/{{ authors[i][j].getId }}'>{{ authors[i][j].getName }}</a>]
               {% endfor %}
 
             </li>
@@ -36,7 +39,7 @@
         <h3>You have no books fool!</h3>
       {% endif %}
 
-      <a href='/'>Homie</a>
+      <a href='/'>Home</a>
     </div>
   </body>
 </html>

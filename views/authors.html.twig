@@ -10,8 +10,11 @@
 
       <!-- PAGE BANNER -->
       <div class='page-header'>
-        <h1></h1>
-        <h5>sweet catalog-ing</h5>
+        <img src='/img/fakeu.png' alt='university logo'>
+        <div class='logo-words'>
+          <h1>Library Catalog</h1>
+          <h5>sweet Catalog-ing</h5>
+        </div>
       </div>
 
       {% if authors is not empty %}
@@ -26,7 +29,7 @@
               <a href='/authors/{{ authors[i].getId }}/edit'>{{ authors[i].getName }}</a>, author of
               {{ books[i]|length > 1 ? 'books' : 'book' }}
               {% for j in 0..books[i]|length - 1 %}
-                [{{ books[i][j].getTitle }}]
+                [<a href='/books/{{ books[i][j].getId }}'>{{ books[i][j].getTitle }}</a>]
               {% endfor %}
 
             </li>
@@ -36,7 +39,7 @@
         <h3>You have no Authors fool!</h3>
       {% endif %}
 
-      <a href='/'>Homie</a>
+      <a href='/'>Home</a>
     </div>
   </body>
 </html>
