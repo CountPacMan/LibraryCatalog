@@ -3,7 +3,7 @@
   <head>
     <link rel='stylesheet' href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel='stylesheet' href='/../css/styles.css'>
-    <title>Library Catalog</title>
+    <title>Books!</title>
   </head>
   <body>
     <div class='container-fluid'>
@@ -17,43 +17,29 @@
         </div>
       </div>
 
-      <h1>{{ book.getTitle }}</h1>
-
-      {% if authors is not empty %}
-        <p>Here are the Authors:</p>
-        <ul>
-          {% for author in authors %}
+      {% if books is not empty %}
+        <h3>Books</h3>
+        {% for i in 0..books|length - 1 %}
+          <ul>
             <li>
-              <form action='/authors/{{ author.getId }}' method='post' class='inlineForm'>
+              <form action='/books/{{ books[i].getId }}' method='post' class='inlineForm'>
                 <input name='_method' type='hidden' value='delete'>
-                <input id='book_id' name='book_id' type='hidden' value='{{ book.getId }}'>
                 <input type='submit' class='deleteLink' value='x'>
               </form>
-              {{ author.getName }}
-              </li>
-          {% endfor %}
-        </ul>
+              <a href='/books/{{ books[i].getId }}/edit'>{{ books[i].getTitle }}</a>, written by
+              {{ authors[i]|length > 1 ? 'authors' : 'author' }}
+              {% for j in 0..authors[i]|length - 1 %}
+                [<a href='/authors/{{ authors[i][j].getId }}'>{{ authors[i][j].getName }}</a>]
+              {% endfor %}
+
+            </li>
+          </ul>
+        {% endfor %}
+      {% else %}
+        <h3>You have no books fool!</h3>
       {% endif %}
 
-      <h4>Add a Author</h4>
-
-      <form action='/authors' method='post'>
-        <input id='book_id' name='book_id[]' type='hidden' value='{{ book.getId }}'>
-        <div class='form-group'>
-          <label for='name'>Author name:</label>
-          <input id='name' name='name' class='form-control' type='text' required>
-        </div>
-
-        <button type='submit' class='btn btn-success'>Add Author</button>
-      </form>
-      <form action='/books/{{ book.getId }}' method='post'>
-        <input name='_method' type='hidden' value='delete'>
-
-        <button type='submit' class='btn btn-danger'>Delete Book</button>
-      </form>
-      <p><a href='/book/{{ book.getId }}/edit'>Edit this Book</a></p>
-      <p><a href='/'>Home</a></p>
-
+      <a href='/'>Home</a>
     </div>
   </body>
 </html>

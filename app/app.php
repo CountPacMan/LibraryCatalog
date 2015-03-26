@@ -24,7 +24,12 @@
 
   $app->get("/books/{id}", function($id) use ($app) {
     $book = Book::find($id);
-    return $app['twig']->render('books.html.twig', array('book' => $book, 'authors' => $book->getAuthors()));
+    $books = [];
+    array_push($books, $book);
+    $authors = [];
+    $author = $book->getAuthors();
+    array_push($authors, $author);
+    return $app['twig']->render('books.html.twig', array('authors' => $authors, 'books' => $books));
   });
 
   $app->get("/books/{id}/edit", function($id) use ($app) {
@@ -39,7 +44,7 @@
       $author = $book->getAuthors();
       array_push($authors, $author);
     }
-    return $app['twig']->render('all_books.html.twig', array('authors' => $authors, 'books' => $books));
+    return $app['twig']->render('books.html.twig', array('authors' => $authors, 'books' => $books));
   });
 
   $app->get("/authors", function() use ($app) {
