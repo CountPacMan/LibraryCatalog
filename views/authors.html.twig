@@ -23,7 +23,7 @@
                 <input name='_method' type='hidden' value='delete'>
                 <input type='submit' class='deleteLink' value='x'>
               </form>
-              <a href='/students/{{ authors[i].getId }}/edit'>{{ authors[i].getName }}</a>, author of
+              <a href='/authors/{{ authors[i].getId }}/edit'>{{ authors[i].getName }}</a>, author of
               {{ books[i]|length > 1 ? 'books' : 'book' }}
               {% for j in 0..books[i]|length - 1 %}
                 [{{ books[i][j].getTitle }}]

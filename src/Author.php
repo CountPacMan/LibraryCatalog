@@ -39,6 +39,15 @@
       $this->setName($name);
     }
 
+    function updateBooks($books) {
+      // delete author's books in join table
+      $GLOBALS['DB']->exec("DELETE FROM books_authors WHERE author_id = {$this->getId()};");
+      // add authors books in join table
+      foreach ($books as $book) {
+        $this->addBook($book);
+      }
+    }
+
     function addBook($book) {
       $GLOBALS['DB']->exec("INSERT INTO books_authors (book_id, author_id) VALUES ({$book->getId()}, {$this->getId()});");
     }
@@ -54,18 +63,15 @@
     }
 
     function getOtherBooks() {
-      $query = $GLOBALS['DB']->query("SELECT books.id FROM books LEFT OUTER JOIN books_authors ON books.id = book_id WHERE author_id != {$this->getId()} OR author_id IS null;");
-      $book_ids = $query->fetchAll(PDO::FETCH_ASSOC);
+      $query = $GLOBALS['DB']->query("SELECT DISTINCT books.* FROM books JOIN books_authors ON book_id = books.id
+JOIN authors ON authors.id = author_id
+WHERE books.id NOT IN (SELECT books.id FROM books JOIN books_authors ON book_id = books.id JOIN authors ON authors.id = author_id WHERE authors.id = {$this->getId()});");
 
       $books = [];
-      foreach ($book_ids as $id) {
-        $book_id = $id['id'];
-        $result = $GLOBALS['DB']->query("SELECT * FROM books WHERE id = {$book_id};");
-        $returned_book = $result->fetchAll(PDO::FETCH_ASSOC);
-        $name = $returned_book[0]['name'];
-        $book_number = $returned_book[0]['book_number'];
-        $id = $returned_book[0]['id'];
-        $new_book = new Book($name, $book_number, $id);
+      foreach ($query as $book) {
+        $book_id = $book['id'];
+        $title = $book['title'];
+        $new_book = new Book($title, $book_id);
         array_push($books, $new_book);
       }
       return $books;

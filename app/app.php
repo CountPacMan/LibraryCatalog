@@ -52,11 +52,21 @@
     return $app['twig']->render('authors.html.twig', array('books' => $books, 'authors' => $authors));
   });
 
+  $app->get("/authors/{id}", function($id) use ($app) {
+    $author = Author::find($id);
+    $authors = [];
+    array_push($authors, $author);
+    $book = $author->getBooks();
+    $books = [];
+    array_push($books, $book);
+    return $app['twig']->render('authors.html.twig', array('books' => $books, 'authors' => $authors));
+  });
+
   $app->get("/authors/{id}/edit", function($id) use ($app) {
     $author = Author::find($id);
     $books = $author->getBooks();
     $other_books = $author->getOtherBooks();
-    return $app['twig']->render('students_edit.html.twig', array('author' => $author, 'books' => $books, 'other_books' => $other_books));
+    return $app['twig']->render('authors_edit.html.twig', array('author' => $author, 'books' => $books, 'other_books' => $other_books));
   });
 
   // post
@@ -128,13 +138,19 @@
   });
 
   $app->patch("/authors/{id}", function($id) use ($app) {
-    $name = $_POST['name'];
     $author = Author::find($id);
-    $author->updateName($name);
-    $author = Author::find($id);
+    if (!empty($_POST['name'])) {
+      $author->updateName($_POST['name']);
+    }
+    $books = [];
+    for ($i = 0; $i < count($_POST['book_id']); $i++) {
+      $book = Book::find($_POST['book_id'][$i]);
+      array_push($books, $book);
+    }
+    $author->updateBooks($books);
     $books = $author->getBooks();
     $other_books = $author->getOtherBooks();
-    return $app['twig']->render('students_edit.html.twig', array('author' => $author, 'books' => $books, 'other_books' => $other_books));
+    return $app['twig']->render('authors_edit.html.twig', array('author' => $author, 'books' => $books, 'other_books' => $other_books));
   });
 
   // delete
