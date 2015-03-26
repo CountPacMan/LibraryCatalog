@@ -128,7 +128,7 @@ WHERE authors.id NOT IN (SELECT authors.id FROM authors JOIN books_authors ON au
 
   static function search($title) {
     $books = [];
-    $returned_books = $GLOBALS['DB']->query("SELECT * FROM books WHERE title = '{$title}';");
+    $returned_books = $GLOBALS['DB']->query("SELECT * FROM books WHERE title LIKE '%{$title}%';");
     foreach ($returned_books as $book) {
       $new_book = new Book($book['title'], $book['id']);
       array_push($books, $new_book);

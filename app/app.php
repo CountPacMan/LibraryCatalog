@@ -120,9 +120,24 @@
     return $app['twig']->render('index.html.twig', array('added' => $added, 'books' => Book::getAll(), 'author_added' => $author_added, 'authors' => Author::getAll(), 'no_author_fail' => false));
   });
 
-  $app->post("/search", function() use ($app) {
-    $results = Book::search($_POST['title']);
-    return $app['twig']->render('search_results.html.twig', array('results' => $results, 'search_term' => $_POST['title']));
+  $app->post("/search/books", function() use ($app) {
+    $books = Book::search($_POST['title']);
+    $authors = [];
+    foreach ($books as $book) {
+      $author = $book->getAuthors();
+      array_push($authors, $author);
+    }
+    return $app['twig']->render('books.html.twig', array('authors' => $authors, 'books' => $books));
+  });
+
+  $app->post("/search/authors", function() use ($app) {
+    $authors = Author::search($_POST['name']);
+    $books = [];
+    foreach ($authors as $author) {
+      $book = $author->getBooks();
+      array_push($books, $book);
+    }
+    return $app['twig']->render('authors.html.twig', array('authors' => $authors, 'books' => $books));
   });
 
   $app->post("/deleteAuthors", function() use ($app) {

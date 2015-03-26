@@ -115,5 +115,15 @@ WHERE books.id NOT IN (SELECT books.id FROM books JOIN books_authors ON book_id 
       $GLOBALS['DB']->exec("DELETE FROM authors *;");
       $GLOBALS['DB']->exec("DELETE FROM books_authors *;");
     }
+
+    static function search($name) {
+      $authors = [];
+      $returned_authors = $GLOBALS['DB']->query("SELECT * FROM authors WHERE name LIKE '%{$name}%';");
+      foreach ($returned_authors as $author) {
+        $new_author = new Author($author['name'], $author['id']);
+        array_push($authors, $new_author);
+      }
+      return $authors;
+    }
   }
 ?>
