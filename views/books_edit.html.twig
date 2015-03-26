@@ -1,41 +1,51 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css'>
-  <link rel='stylesheet' href='/../css/styles.css'>
-  <title>Edit a thing!</title>
-</head>
-<body>
-  <div class='container'>
+  <head>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='/../css/styles.css'>
+    <title>Edit book</title>
+  </head>
+  <body>
+    <div class='container'>
 
-    <!-- PAGE BANNER -->
-    <div class='page-header'>
-      <img src='/img/fakeu.png' alt='university logo'>
-      <div class='logo-words'>
-        <h1>Library Catalog</h1>
-        <h5>sweet Catalog-ing</h5>
+      <!-- PAGE BANNER -->
+      <div class='page-header'>
+        <img src='/img/fakeu.png' alt='university logo'>
+        <div class='logo-words'>
+          <h1>Library Catalog</h1>
+          <h5>sweet Catalog-ing</h5>
+        </div>
       </div>
-    </div>
 
-    <h1>Update the {{ course.getName }} course!</h1>
+      <h1>Update {{ book.getTitle }}</h1>
 
-    <form action='/courses/{{ course.getId }}' method='post'>
-      <input name='_method' type='hidden' value='patch'>
+      <form action='/books/{{ book.getId }}' method='post'>
+        <input name='_method' type='hidden' value='patch'>
 
+        <div class='form-group'>
+          <label for='title'>Rename your Book:</label>
+          <input id='title' name='title' class='form-control' type='text' value='{{ book.getTitle }}'>
+        </div>
+
+        <div class='form-group'>
+          {% for author in authors %}
+            <input type="checkbox" name="author_id[]" value="{{ author.getId }}" checked><a href="/authors/{{ author.getId }}"> {{ author.getName }} </a><br>
+          {% endfor %}
+          {% for author in other_authors %}
+            <input type="checkbox" name="author_id[]" value="{{ author.getId }}"><a href="/authors/{{ author.getId }}"> {{ author.getName }} </a><br>
+          {% endfor %}
+
+          <button type='submit' class='btn btn-success'>Update</button>
+        </div>
+      </form>
       <div class='form-group'>
-        <label for='name'>Rename your course:</label>
-        <input id='name' name='name' class='form-control' type='text'>
+        <form action='/books/{{ book.getId }}' method='post'>
+          <input name='_method' type='hidden' value='delete'>
+
+          <button type='submit' class='btn btn-danger'>Delete Book</button>
+        </form>
       </div>
-
-      <button type='submit' class='btn btn-success'>Update!</button>
-    </form>
-
-    <form action='/courses/{{ course.getId }}' method='post'>
-      <input name='_method' type='hidden' value='delete'>
-
-      <button type='submit' class='btn btn-danger'>Delete this course!</button>
-    </form>
-    <p><a href='/'>Home</a></p>
-  </div>
-</body>
+      <p><a href='/'>Home</a></p>
+    </div>
+  </body>
 </html>

@@ -38,6 +38,15 @@ class Book {
     $this->setTitle($title);
   }
 
+  function updateAuthors($authors) {
+    // delete book's authors in join table
+    $GLOBALS['DB']->exec("DELETE FROM books_authors WHERE book_id = {$this->getId()};");
+    // add book's authors in join table
+    foreach ($authors as $author) {
+      $this->addAuthor($author);
+    }
+  }
+
   function delete() {
     $GLOBALS['DB']->exec("DELETE FROM books WHERE id = {$this->getId()};");
     $GLOBALS['DB']->exec("DELETE FROM books_authors WHERE book_id = {$this->getId()};");
@@ -68,6 +77,21 @@ class Book {
     $authors = [];
     foreach($returned_results as $result) {
       $new_author = new Author($result['name'], $result['id']);
+      array_push($authors, $new_author);
+    }
+    return $authors;
+  }
+
+  function getOtherAuthors() {
+    $query = $GLOBALS['DB']->query("SELECT DISTINCT authors.* FROM authors JOIN books_authors ON author_id = authors.id
+JOIN books ON books.id = book_id
+WHERE authors.id NOT IN (SELECT authors.id FROM authors JOIN books_authors ON author_id = authors.id JOIN books ON books.id = book_id WHERE books.id = {$this->getId()});");
+
+    $authors = [];
+    foreach ($query as $author) {
+      $author_id = $author['id'];
+      $name = $author['name'];
+      $new_author = new Author($name, $author_id);
       array_push($authors, $new_author);
     }
     return $authors;

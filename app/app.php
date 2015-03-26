@@ -34,7 +34,9 @@
 
   $app->get("/books/{id}/edit", function($id) use ($app) {
     $book = Book::find($id);
-    return $app['twig']->render('books_edit.html.twig', array('book' => $book));
+    $authors = $book->getAuthors();
+    $other_authors = $book->getOtherAuthors();
+    return $app['twig']->render('books_edit.html.twig', array('book' => $book, 'authors' => $authors, 'other_authors' => $other_authors));
   });
 
   $app->get("/books", function() use ($app) {
@@ -136,10 +138,19 @@
   // patch
 
   $app->patch("/books/{id}", function($id) use ($app) {
-    $title = $_POST['title'];
     $book = Book::find($id);
-    $book->updateTitle($title);
-    return $app['twig']->render('books.html.twig', array('book' => $book, 'authors' => $book->getAuthors()));
+    if (!empty($_POST['title'])) {
+      $book->updateTitle($_POST['title']);
+    }
+    $authors = [];
+    for ($i = 0; $i < count($_POST['author_id']); $i++) {
+      $author = Author::find($_POST['author_id'][$i]);
+      array_push($authors, $author);
+    }
+    $book->updateAuthors($authors);
+    $authors = $book->getAuthors();
+    $other_authors = $book->getOtherAuthors();
+    return $app['twig']->render('books_edit.html.twig', array('book' => $book, 'authors' => $authors, 'other_authors' => $other_authors));
   });
 
   $app->patch("/authors/{id}", function($id) use ($app) {
@@ -171,7 +182,7 @@
     $book_authors = $book->getAuthors();
     // if a book the author has written has only one author, delete the book
     foreach ($book_authors as $author) {
-      if (count($author->getBooks() == 1)) {
+      if (count($author->getBooks()) == 1) {
         $book->deleteWithAuthor($author->getId());
       }
     }
