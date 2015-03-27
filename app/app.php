@@ -19,6 +19,10 @@
   // get
 
   $app->get("/", function() use ($app) {
+    return $app['twig']->render('select.html.twig');
+  });
+
+  $app->get("/librarian", function() use ($app) {
     return $app['twig']->render('index.html.twig', array('added' => false, 'books' => Book::getAll(), 'author_added' => true, 'authors' => Author::getAll(), 'no_author_fail' => false));
   });
 
